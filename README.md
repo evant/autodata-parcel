@@ -6,5 +6,8 @@ Apply the `@AutoParcel` annotation to your data object or custom annotation, the
 ```java
 @AutoData @AutoParcel
 public abstract class MyClass implements Parcelable {
+  public static MyClass create() {
+    return new AutoData_MyClass();
+  }
 }
 ```
