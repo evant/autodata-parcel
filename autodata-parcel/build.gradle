@@ -1,0 +1,9 @@
+apply plugin: 'java'
+apply from: '../maven-publish.gradle'
+
+group = 'me.tatarka.autodata'
+version = '0.1-SNAPSHOT'
+
+dependencies {
+    compile 'me.tatarka.autodata:autodata:0.1-SNAPSHOT'
+}
