@@ -1,5 +1,5 @@
 # AutoDataParcel
-An Android Parcelable extensions to AutoData
+An Android Parcelable extensions to [AutoData](https://github.com/evant/autodata)
 
 ## Usage
 Apply the `@AutoParcel` annotation to your data object or custom annotation, then implement Parcelable.
