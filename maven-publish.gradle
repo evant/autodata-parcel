@@ -4,6 +4,30 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            pom.withXml {
+                asNode().appendNode('name', 'AutoData Parcel')
+                asNode().appendNode('description', ' An Android Parcelable extensions to AutoData ')
+                asNode().appendNode('url', 'https://github.com/evant/autodata-parcel')
+                asNode().appendNode('scm')
+                        .appendNode('url','git@github.com:evant/autodata-parcel.git')
+                def license = asNode().appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache Software License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+                license.appendNode('distribution', 'repo')
+                def developer = asNode().appendNode('developers').appendNode('developer')
+                developer.appendNode('id', 'evant')
+                developer.appendNode('name', 'Evan Tatarka')
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = project.getProperty('sonatype.username')
+                password = project.getProperty('sonatype.password')
+            }
         }
     }
 }

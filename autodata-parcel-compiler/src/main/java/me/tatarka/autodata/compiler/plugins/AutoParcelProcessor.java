@@ -1,7 +1,5 @@
 package me.tatarka.autodata.compiler.plugins;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.*;
 import me.tatarka.autodata.compiler.AutoDataProcessor;
@@ -21,6 +19,11 @@ import java.util.Iterator;
  */
 @AutoService(AutoDataProcessor.class)
 public class AutoParcelProcessor implements AutoDataProcessor<AutoParcel> {
+    private static final String PARCELABLE_NAME = "android.os.Parcelable";
+    private static final ClassName PARCELABLE_CREATOR = ClassName.bestGuess("android.os.Parcelable.Creator");
+    public static final ClassName PARCEL = ClassName.bestGuess("android.os.Parcel");
+    
+    
     @Override
     public void init(ProcessingEnvironment processingEnvironment) {
 
@@ -36,13 +39,13 @@ public class AutoParcelProcessor implements AutoDataProcessor<AutoParcel> {
         boolean hasFields = !autoDataClass.getFields().isEmpty();
 
         // CREATOR
-        TypeName creatorType = ParameterizedTypeName.get(ClassName.get(Parcelable.Creator.class), genClassType);
+        TypeName creatorType = ParameterizedTypeName.get(PARCELABLE_CREATOR, genClassType);
         TypeSpec creator = TypeSpec.anonymousClassBuilder("")
                 .addSuperinterface(creatorType)
                 .addMethod(MethodSpec.methodBuilder("createFromParcel")
                         .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
-                        .addParameter(TypeName.get(Parcel.class), "in")
+                        .addParameter(PARCEL, "in")
                         .returns(genClassType)
                         .addStatement("return new $T($L)", genClassType, hasFields ? "in" : "")
                         .build())
@@ -63,7 +66,7 @@ public class AutoParcelProcessor implements AutoDataProcessor<AutoParcel> {
         if (hasFields) {
             MethodSpec.Builder constructor = MethodSpec.constructorBuilder()
                     .addModifiers(Modifier.PRIVATE)
-                    .addParameter(TypeName.get(Parcel.class), "in");
+                    .addParameter(PARCEL, "in");
 
             CodeBlock.Builder block = CodeBlock.builder().add("this(");
             for (Iterator<AutoDataField> iterator = autoDataClass.getFields().iterator(); iterator.hasNext(); ) {
@@ -83,7 +86,7 @@ public class AutoParcelProcessor implements AutoDataProcessor<AutoParcel> {
             MethodSpec.Builder method = MethodSpec.methodBuilder("writeToParcel")
                     .addAnnotation(Override.class)
                     .addModifiers(Modifier.PUBLIC)
-                    .addParameter(TypeName.get(Parcel.class), "dest")
+                    .addParameter(PARCEL, "dest")
                     .addParameter(TypeName.INT, "flags");
 
             for (AutoDataField field : autoDataClass.getFields()) {
@@ -106,7 +109,7 @@ public class AutoParcelProcessor implements AutoDataProcessor<AutoParcel> {
 
     private static boolean isParcelable(TypeElement element) {
         for (TypeMirror iface : element.getInterfaces()) {
-            if (iface.toString().equals(Parcelable.class.getName())) {
+            if (iface.toString().equals(PARCELABLE_NAME)) {
                 return true;
             }
         }

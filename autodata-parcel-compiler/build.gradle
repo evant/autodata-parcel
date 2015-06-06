@@ -1,18 +1,19 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 apply from: '../maven-publish.gradle'
+sourceCompatibility = '1.7'
 
 group = 'me.tatarka.autodata'
-version = '0.1-SNAPSHOT'
+version = '0.1'
 
 configurations {
-    provided
+    testProvided
 }
 
 dependencies {
     compile project(':autodata-parcel')
     compile 'me.tatarka.autodata:autodata-compiler:0.1-SNAPSHOT'
-    provided files("${System.env['ANDROID_HOME']}/platforms/android-22/android.jar")
+    testProvided files("${System.env['ANDROID_HOME']}/platforms/android-22/android.jar")
 
     testCompile 'junit:junit:4.12'
     testCompile 'com.google.testing.compile:compile-testing:1.0-SNAPSHOT'
@@ -20,12 +21,11 @@ dependencies {
 }
 
 idea.module {
-    scopes.PROVIDED.plus += [configurations.provided]
+    scopes.PROVIDED.plus += [configurations.testProvided]
 }
 
 sourceSets {
-    main.compileClasspath += configurations.provided
-    test.compileClasspath += configurations.provided
-    test.runtimeClasspath += configurations.provided
+    test.compileClasspath += configurations.testProvided
+    test.runtimeClasspath += configurations.testProvided
 }
 
